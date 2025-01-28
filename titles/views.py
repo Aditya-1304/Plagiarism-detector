@@ -1,5 +1,4 @@
-# titles/views.py
-from django.http import JsonResponse
+from django.shortcuts import render
 from .models import Title
 from .utils import preprocess_title, compute_similarity
 
@@ -14,13 +13,5 @@ def check_similarity(request):
         results = [{"title": t, "cosine_similarity": float(cosine), "fuzzy_similarity": fuzzy} 
                    for t, cosine, fuzzy in zip(existing_titles, cosine_sim, fuzzy_sim)]
         
-        max_similarity = max(cosine_sim)
-        classification = "Too Similar" if max_similarity > 0.8 else "Unique"
-        
-        response = {
-            "new_title": new_title,
-            "max_similarity": float(max_similarity),
-            "classification": classification,
-            "results": results
-        }
-        return JsonResponse(response)
+        return render(request, 'titles/similarity_results.html', {'results': results})
+    return render(request, 'titles/similarity_form.html')
